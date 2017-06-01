@@ -1,0 +1,13 @@
+{
+    "name": "klikki.sant.salo/klikki-datafactory-image",
+    "authors": [
+        {
+            "name": "Santeri",
+            "email": "santeri.salonen@gmail.com"
+        }
+    ],
+    "require": {
+        "imagine/imagine": "^0.7.1",
+        "aws/aws-sdk-php": "^3.28"
+    }
+}
