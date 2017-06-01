@@ -16,6 +16,7 @@ $localhost = 'localhost:99';
 $rm_path = ($_SERVER['HTTP_HOST'] == $localhost) ? 'klikki-datafactory-image' : '';
 
 
+
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 // remove app folder and version id from path
 $rm_path = strtolower( $rm_path );
@@ -46,8 +47,12 @@ $client = $path[0];
 $key = $path[1];
 $q = base64_decode($_GET['q']);
 
-if( $key !== md5($q) ) {
+
+
+if( strtolower($key) !== strtolower(md5($q)) ) {
   http_response_code(400);
+  
+
   die( '{"error" : "non matching hash"}' ); 
 }
 
@@ -58,7 +63,8 @@ if( !isset($params['origin'] ) ) {
   die( '{"error" : "missing origin"}' ); 
 }
 
-$tmp_name = BASE_DIR . '/' . uniqid();
+// always save jpg
+$tmp_name = BASE_DIR . '/' . uniqid() .'.jpg';
 
 $img = @fopen($params['origin'], 'r');
 if(!$img) {
@@ -103,6 +109,7 @@ if( exif_imagetype($tmp_name) ) {
   }
   catch(Exception $e) {
     http_response_code(500);
+    //throw $e;
     die('{"error" : '. json_encode($e->getMessage()) . '}');
   }
 }

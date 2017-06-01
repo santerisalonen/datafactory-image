@@ -138,15 +138,16 @@ class ImageHelper {
       $image->save($image_path);
     }
     else {
+      
       if( $width_org >= $width && $height_org >= $height && $ratio < 1.3 && $ratio > 0.7 ) {
         $mode = ImageInterface::THUMBNAIL_OUTBOUND;
         $image
           ->thumbnail($fit_size, $mode)
           ->save($image_path);
-      }
+      }      
       else {
         // add whitespace
-        echo 'add whitespace';
+
         $mode = ImageInterface::THUMBNAIL_INSET;  
         $resize_img = $image->thumbnail($fit_size, $mode);
         $size_r = $resize_img->getSize();
