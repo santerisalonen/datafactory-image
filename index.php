@@ -1,5 +1,6 @@
 <?php
 
+
 /****
  
  
@@ -14,6 +15,8 @@ DEFINE('BASE_DIR', __DIR__);
 require('ImageHelper.php');
 
 header('Content-Type: application/json; charset=utf8'); 
+
+echo 'WORKS';
  
 $S3_BUCKET = 'datafactory-image-service';
 $S3_REGION = 'eu-west-1';
@@ -95,7 +98,7 @@ if( exif_imagetype($tmp_name) ) {
 
     $result = $s3->putObject(array(
         'Bucket' => $S3_BUCKET,
-        'Key'  => $key,
+        'Key'  => $client . '/' . $key,
         'ContentType' => $contentType,
         'SourceFile' => $tmp_name,
         'ACL' => 'public-read'
