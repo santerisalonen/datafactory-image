@@ -1,13 +1,5 @@
 <?php
 
-
-/****
- 
- 
- 
- 
- 
-****/
 require('vendor/autoload.php');
 
 DEFINE('BASE_DIR', __DIR__);
@@ -15,8 +7,6 @@ DEFINE('BASE_DIR', __DIR__);
 require('ImageHelper.php');
 
 header('Content-Type: application/json; charset=utf8'); 
-
-echo 'WORKS';
  
 $S3_BUCKET = 'datafactory-image-service';
 $S3_REGION = 'eu-west-1';
@@ -35,8 +25,6 @@ if( $rm_path !== '/' ) {
   $path = '/' . ltrim( rtrim($path, '/'), '/') ;
 }
 $path = array_values(array_filter(explode('/', $path)));
-
-
 
 
 
@@ -84,8 +72,15 @@ if( exif_imagetype($tmp_name) ) {
   
   try {
     $contentType = mime_content_type($tmp_name);
-    ImageHelper::validateImage($tmp_name);
-    ImageHelper::fitToSize($tmp_name, $params['fitToSize']['x'], $params['fitToSize']['y']);
+    
+    $params['minSize']['x'] = (isset($params['minSize']['x'])) ? $params['minSize']['x'] : 10;
+    $params['minSize']['y'] = (isset($params['minSize']['y'])) ? $params['minSize']['y'] : 10;
+    
+    ImageHelper::validateImage($tmp_name, $params['minSize']['x'], $params['minSize']['y']);
+    
+    if( isset($params['fitToSize']) && is_array($params['fitToSize']) ) {
+      ImageHelper::fitToSize($tmp_name, $params['fitToSize']['x'], $params['fitToSize']['y']);  
+    }
     if( isset($params['badge']) && is_array($params['badge']) ) {
       ImageHelper::attachBadge($tmp_name, $params['badge']);
     }

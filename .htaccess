@@ -1,4 +1,5 @@
-﻿<IfModule mod_rewrite.c>
+﻿# htaccess
+<IfModule mod_rewrite.c>
 RewriteEngine on
 RewriteRule .  index.php [NC,L]
 </IfModule>
