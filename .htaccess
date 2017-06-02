@@ -1,5 +1,5 @@
-﻿# htaccess
+# edited
 <IfModule mod_rewrite.c>
-RewriteEngine on
-RewriteRule .  index.php [NC,L]
+RewriteEngine On
+RewriteRule . index.php [NC,L]
 </IfModule>

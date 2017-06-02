@@ -1,0 +1,19 @@
+branch-defaults:
+  master:
+    environment: imageService-v1
+environment-defaults:
+  imageService-v1:
+    branch: null
+    repository: null
+global:
+  application_name: image-service
+  default_ec2_keyname: santeri
+  default_platform: arn:aws:elasticbeanstalk:eu-west-1::platform/PHP 7.0 running on
+    64bit Amazon Linux/2.4.0
+  default_region: eu-west-1
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: default
+  sc: git
+  workspace_type: Application
