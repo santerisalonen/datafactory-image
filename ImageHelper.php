@@ -15,8 +15,16 @@ class ImageHelper {
     $imagine = new Imagine();
     $rgb = new RGB();
 
-    if( !isset($badget['font_file'] ) ) {
+    if( !isset($badge['font_file'] ) ) {
       $badge['font_file'] = 'tahoma.ttf'; 
+    }
+    
+    if( !isset($badge['bg_alpha'] ) ) {
+      $badge['bg_alpha'] = 100;
+    }
+    
+    if( !isset($badge['text_alpha'] ) ) {
+      $badge['text_alpha'] = 100;
     }
     
     $font_path = BASE_DIR . '/fonts/'. $badge['font_file'];
@@ -40,6 +48,8 @@ class ImageHelper {
         
       if($badge['shape'] == 'box') {
         // draw shadow
+        
+        /* no shadow for box 
         $coords = array( 
           new Point(0, 0), 
           new Point($badge['width'], 0), 
@@ -48,21 +58,21 @@ class ImageHelper {
         );
         $box->draw()->polygon(
           $coords, 
-          $rgb->color($badge['background'])->darken(30), 
+          $rgb->color($badge['background'], $badge['bg_alpha'])->darken(30), 
           $fill = true, 
           $border = 0); 
-
+        */
         
         // draw box
         $coords = array( 
-          new Point(1, 1), 
-          new Point($badge['width'] - 2, 1), 
-          new Point($badge['width'] - 2, $badge['height'] - 3), 
-          new Point(1, $badge['height'] - 3)
+          new Point(0, 0), 
+          new Point($badge['width'], 0), 
+          new Point($badge['width'], $badge['height']), 
+          new Point(0, $badge['height'])
         );
         $box->draw()->polygon(
           $coords, 
-          $rgb->color($badge['background']), 
+          $rgb->color($badge['background'], $badge['bg_alpha']), 
           $fill = true, 
           $border = 0); 
       
@@ -74,22 +84,25 @@ class ImageHelper {
         $box->draw()->ellipse(
           new Point($badge['width'] / 2, $badge['height'] / 2), 
           new Box($badge['width'] - 1, $badge['height'] - 1), 
-          $rgb->color($badge['background'])->darken(30), 
+          $rgb->color($badge['background'], $badge['bg_alpha'])->darken(30), 
           $fill = true, 
           $border = 0);
         
         // draw circle
         $box->draw()->ellipse(
           new Point( ( $badge['width'] / 2 ), ( $badge['height'] / 2 ) - 2 ), 
-          new Box( $badge['width'] - 2, $badge['height'] - 5), 
-          $rgb->color($badge['background']), 
+          new Box( $badge['width'] - 2, $badge['height'] - 3), 
+          $rgb->color($badge['background'], $badge['bg_alpha']), 
           $fill = true, 
           $border = 0);
       }
     }
     // TEXT
     $badge['text_padding'] = (isset($badge['text_padding'])) ? $badge['text_padding'] : 0.2;
+    
+
     $padding = round($badge['width'] * $badge['text_padding']);
+   
     $font_size = 10;
     $font = $imagine->font($font_path, $font_size, $rgb->color($badge['text_color']));
     
@@ -97,12 +110,13 @@ class ImageHelper {
       $font->box($badge['text'], 0)->getWidth() < $badge['width'] - $padding && 
       $font->box($badge['text'], 0)->getHeight() < $badge['height'] - $padding ) 
     {    
-      $font = $imagine->font($font_path, $font_size, $rgb->color($badge['text_color']));
+      $font = $imagine->font($font_path, $font_size, $rgb->color($badge['text_color'], $badge['text_alpha']));
       $font_size++;
     }      
-        
-    $text_height = $font->box($badge['text'], 0)->getHeight();
-    $text_width = $font->box($badge['text'], 0)->getWidth();
+    // ensure text is not out of bounds
+    $text_height = min( $font->box($badge['text'], 0)->getHeight(), $badge['height']);
+    $text_width = min( $font->box($badge['text'], 0)->getWidth(), $badge['width']);
+    
     
     $box->draw()->text($badge['text'], $font, new Point( ($badge['width'] / 2) - ($text_width / 2), ($badge['height'] / 2) - ($text_height / 2)));
     
@@ -116,7 +130,7 @@ class ImageHelper {
     $image->save();
 
   }
-  public static function fitToSize($image_path, $width, $height) {
+  public static function fitToSize($image_path, $width, $height, $fill_color = '#fff' ) {
     
     $imagine = new Imagine();
     $fit_size = new Box($width, $height);
@@ -146,7 +160,7 @@ class ImageHelper {
           ->save($image_path);
       }      
       else {
-        // add whitespace
+        // add whitespace (Fill oclor)
 
         $mode = ImageInterface::THUMBNAIL_INSET;  
         $resize_img = $image->thumbnail($fit_size, $mode);
@@ -160,7 +174,8 @@ class ImageHelper {
         if ( $height_r < $height ) {
             $start_y = ( $height - $height_r ) / 2;
         }
-        $preserve = $imagine->create($fit_size);
+
+        $preserve = $imagine->create($fit_size, (new RGB())->color($fill_color));
         $preserve->paste($resize_img, new Point($start_x, $start_y));
           
         $preserve->save($image_path);

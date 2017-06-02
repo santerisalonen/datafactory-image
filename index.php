@@ -64,7 +64,7 @@ if( !isset($params['origin'] ) ) {
 }
 
 // always save jpg
-$tmp_name = BASE_DIR . '/' . uniqid() .'.jpg';
+$tmp_name = BASE_DIR . '/tmp/' . uniqid() .'.jpg';
 
 $img = @fopen($params['origin'], 'r');
 if(!$img) {
@@ -85,7 +85,8 @@ if( exif_imagetype($tmp_name) ) {
     ImageHelper::validateImage($tmp_name, $params['minSize']['x'], $params['minSize']['y']);
     
     if( isset($params['fitToSize']) && is_array($params['fitToSize']) ) {
-      ImageHelper::fitToSize($tmp_name, $params['fitToSize']['x'], $params['fitToSize']['y']);  
+      $fill_color = ( isset($params['fitToSize']['background'])) ? $params['fitToSize']['background'] : '#fff';
+      ImageHelper::fitToSize($tmp_name, $params['fitToSize']['x'], $params['fitToSize']['y'], $fill_color);  
     }
     if( isset($params['badge']) && is_array($params['badge']) ) {
       ImageHelper::attachBadge($tmp_name, $params['badge']);
@@ -108,9 +109,9 @@ if( exif_imagetype($tmp_name) ) {
     header('Location: ' . $result['ObjectURL'] );
   }
   catch(Exception $e) {
-    http_response_code(500);
-    //throw $e;
-    die('{"error" : '. json_encode($e->getMessage()) . '}');
+    //http_response_code(500);
+    throw $e;
+    //die('{"error" : '. json_encode($e->getMessage()) . '}');
   }
 }
 else {
