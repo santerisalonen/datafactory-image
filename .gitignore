@@ -1,6 +1,6 @@
 /vendor/
 
-/tmp/*
+/tmp/*.jpg
 *.zip
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
